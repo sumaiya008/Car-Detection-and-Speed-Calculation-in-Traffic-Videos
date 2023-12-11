@@ -67,7 +67,7 @@ while True:
             continue
         
         cv2.rectangle(frame1,(x,y),(x+w,y+h),(255,0,0),2)
-        cv2.putText(frame1, "Vehicles" + str(counter), (x, y-20), cv2.FONT_HERSHEY_SIMPLEX, 1,(255, 244, 0), 2)
+        #cv2.putText(frame1, "Vehicles" + str(counter), (x, y-20), cv2.FONT_HERSHEY_SIMPLEX, 1,(255, 244, 0), 2)
         
         centroid = get_centroid(x, y, w, h)
         detect.append(centroid)
@@ -85,7 +85,9 @@ while True:
                 end_point = (x, y)
                 speed_kph = calculate_speed(start_point, end_point, fps)
                 print(f"Speed of vehicle {counter}: {speed_kph:.2f} km/h")
-     
+
+        cv2.putText(frame1, f"Speed of Vehicle{counter}:{speed_kph:.2f} km/h", (x, y-20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 244, 0), 2)
+
                 
     # Update fps and total frames
     total_frames += 1
@@ -93,8 +95,8 @@ while True:
     fps = total_frames / (fps_end_time - fps_start_time)
 
     # Display speed and fps
-    cv2.putText(frame1, f"Speed: {speed_kph:.2f} km/h", (x, y - 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-    cv2.putText(frame1, f"FPS: {fps:.2f}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+    #cv2.putText(frame1, f"Speed: {speed_kph:.2f} km/h", (x, y - 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+    #cv2.putText(frame1, f"FPS: {fps:.2f}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
     cv2.imshow('original', frame1)
     if cv2.waitKey(1) == 13:
