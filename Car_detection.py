@@ -1,37 +1,47 @@
-#import libraries of python opencv
+# importing libraries
 import cv2
+import numpy as np
 
-# capture video/ video path
-cap = cv2.VideoCapture('./Car_data/video.avi')
+# capturing or reading video
+cap = cv2.VideoCapture('cars.mp4')
 
+# Get video properties (width, height, and frames per second)
+fps = int(cap.get(cv2.CAP_PROP_FPS))
+width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-#use trained cars XML classifiers
-car_cascade = cv2.CascadeClassifier('./Car_data/haarcascade_cars.xml')
+# Define the codec and create a VideoWriter object
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # 'mp4v' for H.264 codec
+out = cv2.VideoWriter('output_video.mp4', fourcc, fps, (width, height))
 
-#read until video is completed
-while cap.isOpened():
-    
-    #capture frame by frame
-    ret, frame = cap.read()
-    #convert video into gray scale of each frames
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+# Initial subtractor
+algo = cv2.createBackgroundSubtractorMOG2()
 
-    #detect cars in the video
-    cars = car_cascade.detectMultiScale(gray, 1.1, 3)
-    #cv2.im_write(cars)
-
-    #to draw a rectangle in each cars 
-    for (x,y,w,h) in cars:
-        cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
-        cv2.imshow('video', frame)
-        crop_img = frame[y:y+h,x:x+w]
-
-     #press Q on keyboard to exit
-    if cv2.waitKey(25) & 0xFF == ord('q'):
+while True:
+    ret, frame1 = cap.read()
+    if not ret:
         break
 
+    grey = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
+    blur = cv2.GaussianBlur(grey, (3, 3), 5)
+    
+    # applying on each frame
+    img_sub = algo.apply(blur)
+    dilat = cv2.dilate(img_sub, np.ones((5, 5)))
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+    dilatada = cv2.morphologyEx(dilat, cv2.MORPH_CLOSE, kernel)
+    dilatada = cv2.morphologyEx(dilatada, cv2.MORPH_CLOSE, kernel)
+    contourSahpe = cv2.findContours(dilatada, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-#release the video-capture object
-cap.release()
-#close all the frames
+    # Save the processed frame to the output video
+    out.write(dilatada)
+
+    cv2.imshow("OUTPUT", dilatada)
+
+    if cv2.waitKey(1) == 13:
+        break
+
+# Release the VideoWriter and VideoCapture objects
+out.release()
 cv2.destroyAllWindows()
+cap.release()
