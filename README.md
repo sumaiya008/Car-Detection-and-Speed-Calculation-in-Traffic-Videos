@@ -1,1 +1,3 @@
 # Car-Detection-and-Speed-Calculation-in-Traffic-Videos
+
+This project aims to address the shortcomings of existing traffic monitoring systems by utilizing computer vision techniques. We set out to create a simple solution for detecting and tracking cars in traffic videos while simultaneously calculating their speeds. By focusing on simpler methods within the realm of computer vision, we aim to illustrate that effective traffic analysis is attainable without the need for resource-intensive deep learning models, creating real-time processing capabilities to help policy makers understand traffic flow within their city.
